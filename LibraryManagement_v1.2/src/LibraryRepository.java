@@ -28,6 +28,7 @@ public class LibraryRepository {
     /**
      * 메모리의 모든 도서 정보를 MariaDB에 동기화(저장)합니다.
      * <p>기존 CSV의 '전체 저장' 기능을 DB의 Upsert(Insert or Update) 로직으로 변환하여 구현하였습니다.</p>
+     * <p삭제하는 메서드 호출 추가(2026.05.20 김도은)</p>
      * <p>성능 최적화를 위해 Batch 처리를 수행하며, 중복된 ID가 있을 경우 정보를 업데이트합니다.</p>
      * * @param bookMap 동기화할 도서 데이터 맵
      *
@@ -67,6 +68,33 @@ public class LibraryRepository {
 
         } catch (SQLException e) {
             System.err.println("[오류] DB 저장(saveBooks) 실패: " + e.getMessage());
+        }
+    }
+
+    public boolean deleteBook(int bookId) {
+        // 특정 ID만 삭제하도록 WHERE 절을 포함한 쿼리 작성
+        String sql = "DELETE FROM books WHERE book_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 파라미터 바인딩을 통해 SQL Injection 방지
+            pstmt.setInt(1, bookId);
+
+            // 영향을 받은 행(row)의 수를 반환받음
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("[시스템] 도서 번호 " + bookId + "번이 성공적으로 삭제되었습니다.");
+                return true;
+            } else {
+                System.out.println("[알림] 삭제할 도서 번호 " + bookId + "번을 찾을 수 없습니다.");
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("[오류] DB 삭제 작업 실패: " + e.getMessage());
+            return false;
         }
     }
 
