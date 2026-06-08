@@ -50,20 +50,16 @@ public class LibraryMain {
             System.out.println("\n========= CSV 로그인 시스템 =========");
             System.out.print("아이디: ");
             String id = sc.nextLine();
-
-            if (id.length() > 0 && Character.isDigit(id.charAt(0))) {
-                System.out.println("다시 입력하세요.");
-                continue;
-            }
             System.out.print("비밀번호: ");
             String pw = "";
 
-
+            // System.console()은 이클립스/IntelliJ 내장 콘솔에서는 null을 반환할 수 있으므로 방어 코드를 작성한다
             if (System.console() != null) {
-
+                // readPassword()는 입력받는 글자를 화면에 마스킹하거나 표시하지 않는다
                 char[] passwordChars = System.console().readPassword();
                 pw = new String(passwordChars);
             } else {
+                // IDE(이클립스 등) 내부 개발 환경을 위한 백업 코드 (이때는 어쩔 수 없이 노출됨)
                 pw = sc.nextLine();
             }
 
