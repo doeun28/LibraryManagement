@@ -45,7 +45,7 @@ public class LibraryMain {
      * @return 로그인 성공 여부 (true: 성공)
      * @see LibraryManager#login(String, String)
      */
-    private static boolean performLogin() {
+    public static boolean performLogin() {
         while (true) {
             System.out.println("\n========= CSV 로그인 시스템 =========");
             System.out.print("아이디: ");
