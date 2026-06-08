@@ -45,18 +45,23 @@ public class LibraryMain {
      * @return 로그인 성공 여부 (true: 성공)
      * @see LibraryManager#login(String, String)
      */
-    private static boolean performLogin() {
+    public static boolean performLogin() {
         while (true) {
             System.out.println("\n========= CSV 로그인 시스템 =========");
             System.out.print("아이디: ");
             String id = sc.nextLine();
-
-            if (id.length() > 0 && Character.isDigit(id.charAt(0))) {
-                System.out.println("다시 입력하세요.");
-                continue;
-            }
             System.out.print("비밀번호: ");
-            String pw = sc.nextLine();
+            String pw = "";
+
+            // System.console()은 이클립스/IntelliJ 내장 콘솔에서는 null을 반환할 수 있으므로 방어 코드를 작성한다
+            if (System.console() != null) {
+                // readPassword()는 입력받는 글자를 화면에 마스킹하거나 표시하지 않는다
+                char[] passwordChars = System.console().readPassword();
+                pw = new String(passwordChars);
+            } else {
+                // IDE(이클립스 등) 내부 개발 환경을 위한 백업 코드 (이때는 어쩔 수 없이 노출됨)
+                pw = sc.nextLine();
+            }
 
             if (manager.login(id, pw)) return true;
             System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
